@@ -1,0 +1,108 @@
+*{
+    background-color: #fff;
+}
+.b-header{
+
+    height: 50px;
+    border-bottom: 2px solid rgb(153, 151, 151);
+}
+
+.b-heading-info{
+    display: flex;
+    align-items: center;
+}
+
+.btn-collape-expand{
+
+    cursor: pointer;
+}
+
+.btn-save{
+    display: flex;
+    justify-content: end;
+}
+
+.icon-red-expanded{
+
+    --sds-c-icon-color-foreground-default: red;
+}
+
+.icon-gray-collapse{
+
+    --sds-c-icon-color-foreground-default: gray;
+}
+
+.text-bold-expanded{
+
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.text-bold-collapse{
+
+    font-weight: 900;
+    font-size: 18px;
+    color: gray;
+
+}
+
+.text-normal-expanded{
+
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.text-normal-collapse{
+
+    font-weight: 400;
+    font-size: 18px;
+    color: rgb(171, 170, 170);
+
+}
+
+.b-body{
+
+    width: 100%;
+}
+.b-test{
+    display: flex;
+    flex-direction: column;
+}
+.b-pill{
+
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+    border: 1px solid gray;
+    border-radius: 50px;
+
+}
+
+a:hover{
+
+    text-decoration: none;
+    color:blue;
+    
+}
+
+a{
+    color: black;
+}
+
+.icon-color{
+
+    --sds-c-icon-color-foreground-default: blue;
+}
+
+.open-edit-form{
+
+    color: blue;
+    display: flex;
+    justify-content: end;
+}
+
+.open-edit-form:hover{
+
+    text-decoration: underline;
+    cursor: pointer;
+}

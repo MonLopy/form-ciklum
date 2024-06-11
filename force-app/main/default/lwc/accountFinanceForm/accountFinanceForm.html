@@ -1,0 +1,142 @@
+<template>
+    <div class="b-container">
+        <div class="b-header slds-grid slds-grid_align-spread">
+                <div class="slds-m-horizontal_medium b-heading-info">
+                    <lightning-icon size="small" icon-name="utility:money" alternative-text="Maney image" title="Money" class={getLogoColor}></lightning-icon>
+                </div>
+                <div class="b-heading-info">
+                    <span class={getLogoText}>Finance Information</span>
+                </div>
+                <div class="slds-col_bump-left b-heading-info">
+                    <span if:false={fieldsAreFilledOut} style="color:red">Please complete your details here</span>
+                    <span if:true={fieldsAreFilledOut} style="color:green">Details completed</span>
+                </div>
+                <div class="slds-m-horizontal_medium b-heading-info">
+                    <lightning-icon 
+                        class="btn-collape-expand"
+                        size="xx-small" 
+                        icon-name={changeIcon} 
+                        alternative-text="Expand/Collaps" 
+                        title="Image" 
+                        onclick={handleToggleClick}
+                    ></lightning-icon>
+                </div>
+        </div>
+        <div class="b-body" if:true={isWindowExpanded} >
+            <div class="b-edit-mode" if:false={isReadOnlyMode}>
+                <lightning-record-edit-form
+                    record-id={accountId}
+                    object-api-name="Account"
+                    onsuccess={changeFormMode}
+                    onsubmit={handleSubmit}
+                >
+                    <lightning-messages> </lightning-messages>
+                        <div class="slds-grid slds-wrap">
+                            <div  class="slds-col slds-size_1-of-2 slds-p-left_large ">
+                                <div class="slds-grid slds-wrap">
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Registration_No_of_Company__c"> </lightning-input-field>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Bank_Name__c" required onchange={handleFieldChange}> </lightning-input-field>
+                                    <lightning-combobox class="slds-col slds-size_1-of-2 slds-m-top_large" label="Bank Country" value={bankCountry} options={billingCountryOptions} onchange={handleBankCountryChange} required></lightning-combobox>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Bank_Adress__c"> </lightning-input-field>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Routing_Number__c"> </lightning-input-field>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Account_Number__c" required onchange={handleFieldChange}> </lightning-input-field>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Swift_Code__c" required onchange={handleFieldChange}> </lightning-input-field>
+                                    <lightning-input-field class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Iban__c" required onchange={handleFieldChange}> </lightning-input-field>
+                                    <lightning-combobox class="slds-col slds-size_1-of-2 slds-m-top_large" label="Currancy" value={currancy} options={currencyOptions} onchange={handleCurrancyChange} required></lightning-combobox>
+                                    <lightning-file-upload
+                                        label="Please attach bank account statement, such as letter from the bank. Payment will not be able without verification"
+                                        class="slds-col slds-size_12-of-12"
+                                        name="fileUploader"
+                                        accept={acceptedFormats}
+                                        record-id={accountId}
+                                        onuploadfinished={handleUploadFinished}
+                                        multiple
+                                        required="true"
+                                    ></lightning-file-upload>
+                                    <div class="b-test">
+                                        <template for:each={uploadedFiles} for:item="file">
+                                            <div key={file.ContentDocumentId} class="b-pill slds-m-top_medium">
+                                                <lightning-button-icon
+                                                    data-item={file.ContentDocumentId}
+                                                    variant='bare' 
+                                                    icon-name="utility:close"  
+                                                    alternative-text="Close" 
+                                                    title="Close"
+                                                    size="xx-small"
+                                                    class="slds-m-horizontal_small"
+                                                    onclick={deleteFile}
+                                                ></lightning-button-icon>
+                                                <span class="slds-pill__label pill-label">
+                                                    <a href={file.Url}>
+                                                        {file.Name}
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-save slds-col slds-size_1-of-1">
+                                <lightning-button
+                                    class="slds-m-around_large"
+                                    variant="brand"
+                                    type="submit"
+                                    name="SAVE"
+                                    label="SAVE"
+                                    disabled={isSaveDisabled}
+                                >
+                                </lightning-button>  
+                            </div>
+                        </div>
+                    </lightning-record-edit-form>
+                </div>
+            <div class="b-read-mode" if:true={isReadOnlyMode}>
+                <lightning-record-view-form
+                    record-id={accountId}
+                    object-api-name="Account"
+                >
+                <div class="slds-grid slds-wrap">
+                    <div  class="slds-col slds-size_1-of-2 slds-p-left_large ">
+                        <div class="slds-grid slds-wrap">
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Registration No of Company</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Registration_No_of_Company__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Bank Name</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Bank_Name__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Bank Country</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Bank_Country__c" > </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Bank Address</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Bank_Adress__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Routing Number</span>                                
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Routing_Number__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Account Number</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Account_Number__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Swift Code</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Swift_Code__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Iban</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Iban__c" > </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Currency</span>
+                            <lightning-output-field variant="label-hidden" class="slds-col slds-size_1-of-2 slds-m-top_large" field-name="Currancy__c"> </lightning-output-field>
+                            <span class="slds-col slds-size_1-of-2 slds-m-top_large">Account Statement</span>
+                            <div class="b-test slds-col slds-size_1-of-2 slds-m-top_large slds-p-bottom_x-large">
+                                <template for:each={uploadedFiles} for:item="file">
+                                    <div key={file.ContentDocumentId} class="slds-m-top_medium">
+                                        <span class="slds-pill__label pill-label">
+                                            <a href={file.Url}>
+                                                <lightning-icon size='x-small' class='icon-color' icon-name="utility:download" alternative-text="Utility image" title="Image"></lightning-icon>
+                                            </a>
+                                            <span class="slds-p-left_small">{file.Name}</span>
+                                        </span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <div  class="slds-col slds-size_1-of-2 slds-p-left_large b-edit-mode">
+                        <span class="slds-p-right_x-large open-edit-form slds-col slds-size_1-of-1 slds-m-top_large" onclick={changeFormMode}>Edit</span>
+                    </div>
+                </div>
+            </lightning-record-view-form>
+        </div>
+    </div>
+    </div>
+</template>
